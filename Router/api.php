@@ -41,6 +41,7 @@ function notFound($msg = "Endpoint not found") {
  * Replace later with token-based auth
  */
 function getCurrentUser() {
+    
     if (!isset($_SERVER['HTTP_AUTHORIZATION'])) {
         unauthorized("Missing Authorization header");
     }

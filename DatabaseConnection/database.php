@@ -88,7 +88,48 @@ INSERT OR IGNORE INTO contents (title, link) VALUES
 ('Phishing Awareness', 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
 ");
 
+// --- Assessments table ---
+$pdo->exec("
+CREATE TABLE IF NOT EXISTS assessments (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    description TEXT,
+    content_id INTEGER,
+    type TEXT NOT NULL, -- 'formative' or 'summative'
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(content_id) REFERENCES contents(id)
+);
+");
+
+// Insert sample assessments
+$pdo->exec("
+INSERT OR IGNORE INTO assessments (title, description, content_id, type) VALUES
+('Phishing Quiz', 'Test knowledge on phishing emails', 2, 'formative'),
+('Cybersecurity Final Test', 'Summative assessment on all modules', 1, 'summative');
+");
+
+// --- Results table ---
+$pdo->exec("
+CREATE TABLE IF NOT EXISTS results (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    assessment_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    score REAL NOT NULL,
+    completed_at TEXT DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(assessment_id) REFERENCES assessments(id),
+    FOREIGN KEY(user_id) REFERENCES users(id)
+);
+");
+
+// Insert sample results
+$pdo->exec("
+INSERT OR IGNORE INTO results (assessment_id, user_id, score) VALUES
+(1, 3, 85.5),
+(2, 3, 92.0),
+(1, 4, 78.0);
+");
+
 echo "Database and tables created successfully!\n";
 echo "Default SystemAdmin: admin@system.com / admin123\n";
-echo "Sample OrgAdmins and Employees added.\n";
+echo "Sample OrgAdmins, Employees, content, assessments, and results added.\n";
 
