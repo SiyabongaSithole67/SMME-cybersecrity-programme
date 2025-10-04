@@ -1,17 +1,18 @@
 <?php
+//STAND ALONE PROGRAM TO CREATE SQLITE DATABASE!!
 // Path to SQLite file
-$dbFile = __DIR__ . "/database.sqlite";
+$dbFile = __DIR__ . "/database.sqlite"; //directory!! of our db
 
 // Create or open the SQLite database
-$pdo = new PDO("sqlite:$dbFile");
+$pdo = new PDO("sqlite:$dbFile"); //instantiation
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-echo "Creating database and tables...\n";
+echo "Creating database and tables...\n"; //like__system.out.println() in java or print()
 
 // --- Roles table ---
 $pdo->exec("
 CREATE TABLE IF NOT EXISTS roles (
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY,P
     name TEXT NOT NULL
 );
 ");

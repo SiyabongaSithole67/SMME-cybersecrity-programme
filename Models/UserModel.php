@@ -16,15 +16,24 @@ class UserModel {
     public function getName() { return $this->name; }
     public function getEmail() { return $this->email; }
     public function getPassword() { return $this->password; }
-    public function getRoleId() { return $this->role_id; }
+    public function getRoleId() { return $this->role_id; }  //gets user type // role_id = 1 SystemAdmin, role_id =2 OrgAdmin, role_id = 3 Employee
     public function getOrganisationId() { return $this->organisation_id; }
 
     // --- Setters ---
-    public function setId($id) { $this->id = $id; }
-    public function setName($name) { $this->name = $name; }
+    public function setId($id) {
+         $this->id = $id;
+        
+        }
+
+
+    public function setName($name) {
+        
+        $this->name = $name;
+    
+    }
     public function setEmail($email) { $this->email = $email; }
     public function setPassword($password) { $this->password = $password; }
-    public function setRoleId($role_id) { $this->role_id = $role_id; }
+    public function setRoleId($role_id) { $this->role_id = $role_id; } //sets the user type
     public function setOrganisationId($organisation_id) { $this->organisation_id = $organisation_id; }
 
     public function verifyUser($email, $password) {
