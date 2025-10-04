@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . "/../models/Assessment.php";
-require_once __DIR__ . "/../config/Database.php";
+require_once __DIR__ . "/../config/DatabaseUtil.php";
 
 /**
  * Class AssessmentController
@@ -18,7 +18,7 @@ class AssessmentController {
      * Constructor: Establishes SQLite database connection
      */
     public function __construct() {
-        $this->db = (new Database())->connect();
+      $this->db = (new DatabaseUtil())->connect();
     }
 
     /**

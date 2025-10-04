@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . "/../config/Database.php";
+require_once __DIR__ . "/../config/DatabaseUtil.php";
 
 /**
  * Class ContentController
@@ -25,7 +25,7 @@ class ContentController {
      * Initializes the database connection
      */
     public function __construct() {
-        $this->db = (new Database())->connect();
+       $this->db = (new DatabaseUtil())->connect();
     }
 
     /**

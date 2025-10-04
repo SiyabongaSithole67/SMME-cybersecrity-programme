@@ -2,7 +2,7 @@
 
 // Include the User model and Database connection class
 require_once __DIR__ . "/../models/User.php";
-require_once __DIR__ . "/../config/Database.php";
+require_once __DIR__ . "/../config/DatabaseUtil.php";
 
 class UserController {
 
@@ -13,7 +13,8 @@ class UserController {
     public function __construct() {
         // Create a new Database object and connect to the database
         // Store the PDO connection in $this->db for use in all methods
-        $this->db = (new Database())->connect();
+
+        $this->db = (new DatabaseUtil())->connect();
     }
 
     /**
@@ -29,7 +30,7 @@ class UserController {
      * - OrgAdmin (role_id = 2) → can only create employees (role_id = 3) in their own organisation
      * - Employees (role_id = 3) → cannot create users
      */
-    public function createUser($currentUser, array $userData) {
+    public function createUser($currentUser, array $userData) { //create a user
 
         // Check the role of the current user
         if ($currentUser->getRoleId() == 1) {
@@ -73,7 +74,7 @@ class UserController {
      * - OrgAdmin → sees users only in their organisation
      * - Employee → sees only their own account
      */
-    public function listUsers($currentUser) {
+    public function listUsers($currentUser) { //get or list all users
 
         // SystemAdmin → retrieve all users
         if ($currentUser->getRoleId() == 1) {
@@ -93,6 +94,22 @@ class UserController {
         // Fetch all results as an array of associative arrays and return
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+
+    // method to select one user
+
+/**
+ * 
+ * C-Create
+ * R-Read (viewing details)
+ * U-Update (Updating data)
+ * D-Delete 
+ */
+
+
+
+
+
 }
 
 
