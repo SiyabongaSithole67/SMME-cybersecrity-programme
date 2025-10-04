@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../DatabaseConnection/database.php';
 // User.php
 
 class UserModel {
@@ -26,6 +27,19 @@ class UserModel {
     public function setRoleId($role_id) { $this->role_id = $role_id; }
     public function setOrganisationId($organisation_id) { $this->organisation_id = $organisation_id; }
 
-    
+    public function verifyUser($email, $password) {
+        $db = new DatabaseUtil();  
+        $conn = $db->connect();
+
+        $stmt = $conn->prepare("SELECT * FROM users WHERE email = :email");
+        $stmt->bindParam(':email', $email);
+        $stmt->execute();
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($user && password_verify($password, $user['password'])) {
+            return $user;
+        }
+        return false;
+    }
  
 }
