@@ -46,6 +46,7 @@ class LoginController {
             die("Login failed: user not found");
         }
 
+        
         // Simple password check (plaintext for now)
         // NOTE: In production, use password_hash() and password_verify()
         if ($row['password'] !== $password) {
@@ -63,6 +64,21 @@ class LoginController {
 
         // Return the authenticated User object
         return $user;
+    }
+
+    public function verifyUser($email, $password) {
+        $db = new DatabaseUtil();  
+        $conn = $db->connect();
+
+        $stmt = $conn->prepare("SELECT * FROM users WHERE email = :email");
+        $stmt->bindParam(':email', $email);
+        $stmt->execute();
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($user && password_verify($password, $user['password'])) {
+            return $user;
+        }
+        return false;
     }
 }
 
