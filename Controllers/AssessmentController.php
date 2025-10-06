@@ -25,7 +25,7 @@ class AssessmentController {
      * Create a new assessment
      * Only SystemAdmin can create assessments
      *
-     * @param User $currentUser Authenticated user attempting to create assessment
+     * @param UserModel $currentUser Authenticated user attempting to create assessment
      * @param array $data Associative array containing:
      *                    - 'title' => string
      *                    - 'description' => string
@@ -55,7 +55,7 @@ class AssessmentController {
     /**
      * List all assessments accessible to the current user
      * 
-     * @param User $currentUser Authenticated user
+     * @param UserModel $currentUser Authenticated user
      * @return array List of assessments (associative arrays)
      */
     public function listAssessments($currentUser) {
@@ -104,7 +104,7 @@ class AssessmentController {
      * - OrgAdmin: results of employees in their organisation
      * - Employee: only own results
      *
-     * @param User $currentUser Authenticated user
+     * @param UserModel $currentUser Authenticated user
      * @param int|null $employeeId Optional specific employee ID (OrgAdmin can filter)
      * @return array List of results (associative arrays)
      */

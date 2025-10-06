@@ -29,7 +29,7 @@ class LoginController {
      *
      * @param string $email The email address entered by the user
      * @param string $password The password entered by the user
-     * @return User Returns a populated User object if login succeeds
+     * @return UserModel Returns a populated User object if login succeeds
      * @throws Exception if login fails
      */
     public function login($email, $password) {
@@ -54,7 +54,7 @@ class LoginController {
         }
 
         // Populate User object with database data
-        $user = new User();
+        $user = new UserModel();
         $user->setId($row['id']);
         $user->setName($row['name']);
         $user->setEmail($row['email']);
