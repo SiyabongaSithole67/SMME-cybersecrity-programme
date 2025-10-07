@@ -13,9 +13,18 @@ function getRoleName($role_id) {
     }
 }
 
-// Get current user from session (assume UserModel object is serialized in session)
+// Get current user from session
+$currentUser = null;
+if (isset($_SESSION['user'])) {
+    $u = $_SESSION['user'];
+    $currentUser = new UserModel();
+    $currentUser->setId($u['id'] ?? null);
+    $currentUser->setName($u['name'] ?? null);
+    $currentUser->setEmail($u['email'] ?? null);
+    $currentUser->setRoleId($u['role_id'] ?? null);
+    $currentUser->setOrganisationId($u['organisation_id'] ?? null);
+}
 
-$currentUser = isset($_SESSION['user']) ? unserialize($_SESSION['user']) : null;
 if (!$currentUser || !in_array($currentUser->getRoleId(), [1,2])) {
     die('Access denied: Only SystemAdmins or OrgAdmins can access this page.');
 }

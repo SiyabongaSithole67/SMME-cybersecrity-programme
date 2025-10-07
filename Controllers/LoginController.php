@@ -45,11 +45,14 @@ public function login($email, $password) {
         session_start();
     }
 
-    // Store user info in session
+    // Store complete user info in session for other views/controllers
     $_SESSION['user'] = [
         'id' => $user->getId(),
         'name' => $user->getName(),
-        'role' => $this->roleName($user->getRoleId()) // 'employee', 'systemAdmin', 'admin'
+        'email' => $user->getEmail(),
+        'role' => $this->roleName($user->getRoleId()), 
+        'role_id' => (int)$user->getRoleId(),
+        'organisation_id' => $user->getOrganisationId()
     ];
 
     // Redirect based on role
