@@ -2,7 +2,7 @@
 
 // Include the User model and Database connection class
 require_once __DIR__ . "/../models/User.php";
-require_once __DIR__ . "/../config/DatabaseUtil.php";
+require_once __DIR__ . "/../Donfig/databaseUtil.php";
 
 class UserController {
 

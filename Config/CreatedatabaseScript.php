@@ -1,7 +1,7 @@
 <?php
 //STAND ALONE PROGRAM TO CREATE SQLITE DATABASE!!
 // Path to SQLite file
-$dbFile = __DIR__ . "/config/database.sqlite"; //directory!! of our db
+$dbFile = __DIR__ . "/Config/database.sqlite"; //directory!! of our db
 
 // Create or open the SQLite database
 $pdo = new PDO("sqlite:$dbFile"); //instantiation

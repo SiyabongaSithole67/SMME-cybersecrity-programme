@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . "/../config/DatabaseUtil.php";
+require_once __DIR__ . "/../Config/databaseUtil.php";
 
 /**
  * Class OrganisationController

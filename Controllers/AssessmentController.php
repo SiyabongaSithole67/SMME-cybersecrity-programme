@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . "/../models/Assessment.php";
-require_once __DIR__ . "/../config/DatabaseUtil.php";
+require_once __DIR__ . "/../Models/Assessment.php";
+require_once __DIR__ . "/../Config/databaseUtil.php";
 
 /**
  * Class AssessmentController

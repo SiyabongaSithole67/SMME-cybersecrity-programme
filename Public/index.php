@@ -2,9 +2,9 @@
 session_start();
 
 // Include necessary files
-require_once __DIR__ . '/models/UserModel.php';
-require_once __DIR__ . '/models/ContentModel.php';
-require_once __DIR__ . '/controllers/ContentController.php';
+require_once __DIR__ . '/../Models/UserModel.php';
+require_once __DIR__ . '/../Models/ContentModel.php';
+require_once __DIR__ . '/../Controllers/ContentController.php';
 
 // Check if user is logged in
 if (!isset($_SESSION['user'])) {
@@ -20,5 +20,5 @@ $contentController = new ContentController();
 $contentList = $contentController->listContent($currentUser);
 
 // Include the view
-include __DIR__ . '/views/content-view.php';
+include __DIR__ . '/Views/Content.php';
 ?>

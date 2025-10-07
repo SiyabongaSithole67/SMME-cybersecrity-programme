@@ -1,7 +1,8 @@
 <?php
-require_once __DIR__ . "/../controllers/LoginController.php";
+require_once __DIR__ . "/../Controllers/LoginController.php";
 
 session_start();
+
 if (isset($_SESSION['user'])) {
     // Already logged in, redirect to home
     $role = $_SESSION['user']['role'];
@@ -68,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
   <form method="post">
-      <h2>Employee Login</h2>
+      <h2>Login</h2>
       <?php if ($message) echo "<p class='message'>$message</p>"; ?>
       <input type="email" name="email" placeholder="Email" required>
       <input type="password" name="password" placeholder="Password" required>
