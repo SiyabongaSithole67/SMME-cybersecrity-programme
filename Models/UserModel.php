@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../DatabaseConnection/database.php';
+require_once __DIR__ . '/../Config/databaseUtil.php';
 // User.php
 
 class UserModel {

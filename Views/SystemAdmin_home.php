@@ -1,6 +1,8 @@
 <?php
 session_start();
-if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'employee') {
+
+// Only allow SystemAdmin users
+if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'systemAdmin') {
     header("Location: /Views/login.php");
     exit();
 }
@@ -10,7 +12,7 @@ $user = $_SESSION['user'];
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Employee Dashboard</title>
+  <title>System Admin Dashboard</title>
   <style>
     nav {
       background: #007BFF;
@@ -22,19 +24,24 @@ $user = $_SESSION['user'];
       margin-right: 1rem;
       text-decoration: none;
     }
+    nav a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
   <nav>
     <span>Welcome, <?php echo htmlspecialchars($user['name']); ?></span> |
-    <a href="/Views/employee_home.php">Home</a>
-    <a href="/Views/profile.php">Profile</a>
+    <a href="/Views/SystemAdmin_home.php">Home</a>
+    <a href="/Views/manage_orgs.php">Manage Organisations</a>
+    <a href="/Views/view_reports.php">Reports</a>
     <a href="/Views/logout.php">Logout</a>
   </nav>
 
   <main style="padding: 2rem;">
-    <h1>Employee Dashboard</h1>
-    <p>Here you can view your assessments, progress, and content.</p>
+    <h1>System Admin Dashboard</h1>
+    <p>Here you can manage organisations, view reports, and oversee system-wide settings.</p>
   </main>
 </body>
 </html>
+
