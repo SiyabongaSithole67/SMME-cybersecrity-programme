@@ -30,6 +30,7 @@ class UserController {
      * - OrgAdmin (role_id = 2) → can only create employees (role_id = 3) in their own organisation
      * - Employees (role_id = 3) → cannot create users
      */
+
     public function createUser($currentUser, array $userData) { //create a user
 
         // Check the role of the current user
