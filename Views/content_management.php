@@ -70,7 +70,7 @@ $contentList = $contentController->listContent($currentUser);
       <tr>
         <td><?= htmlspecialchars($content['id']) ?></td>
         <td><?= htmlspecialchars($content['title']) ?></td>
-        <td><a href="<?= htmlspecialchars($content['link']) ?>" target="_blank">View</a></td>
+  <td><a href="/Views/Content.php?id=<?= htmlspecialchars($content['id']) ?>" target="_blank">Open</a></td>
         <?php if ($_SESSION['user']['role'] == 'systemAdmin'): ?>
           <td>
             <form method="POST" action="/Controllers/ContentController.php?action=delete" onsubmit="return confirm('Delete this content?');">
