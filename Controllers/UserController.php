@@ -145,7 +145,7 @@ class UserController {
         }
         $hashed = password_hash($newPassword, PASSWORD_DEFAULT);
         $stmt = $this->db->prepare("UPDATE users SET password = ? WHERE id = ?");
-        return $stmt->execute([$hashed, (int)$id]);
+        return $stmt->execute([$newPassword, (int)$id]);
     }
 
     /**

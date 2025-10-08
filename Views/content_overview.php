@@ -4,6 +4,7 @@ $db = (new DatabaseUtil())->connect();
 $stmt = $db->query('SELECT id, title, link, created_at FROM contents ORDER BY created_at DESC');
 $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
+<?php include __DIR__ . '/_user_badge.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

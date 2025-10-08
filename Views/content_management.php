@@ -28,7 +28,7 @@ $contentList = $contentController->listContent($currentUser);
   <meta charset="UTF-8">
   <title>Content Management</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; }
+    
     nav { background: #2c3e50; color: white; padding: 1rem; }
     nav a { color: white; margin-right: 1rem; text-decoration: none; }
     table { width: 90%; margin: 2rem auto; border-collapse: collapse; }
@@ -40,11 +40,6 @@ $contentList = $contentController->listContent($currentUser);
   </style>
 </head>
 <body>
-  <nav>
-    <a href="/Views/admin_home.php">Dashboard</a>
-    <a href="/Views/content_management.php">Content Management</a>
-    <a href="/logout.php">Logout</a>
-  </nav>
 
   <h2 style="text-align:center;">Manage Learning Content</h2>
 
