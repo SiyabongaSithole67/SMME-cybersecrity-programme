@@ -21,6 +21,7 @@ $currentUser->setOrganisationId($_SESSION['user']['organisation_id'] ?? null);
 $contentController = new ContentController();
 $contentList = $contentController->listContent($currentUser);
 ?>
+<?php include __DIR__ . '/_user_badge.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

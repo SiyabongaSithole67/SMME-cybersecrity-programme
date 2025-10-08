@@ -30,7 +30,7 @@ $user = $_SESSION['user'];
   <nav>
     <span>Welcome, <?php echo htmlspecialchars($user['name']); ?></span> |
     <a href="/Views/OrgAdmin_home.php">Home</a>
-    <a href="/Views/manage_employees.php">Manage Employees</a>
+  <a href="/Views/manage_users.php">Manage Employees</a>
     <a href="/Views/view_reports.php">Reports</a>
     <a href="/Views/logout.php">Logout</a>
   </nav>
