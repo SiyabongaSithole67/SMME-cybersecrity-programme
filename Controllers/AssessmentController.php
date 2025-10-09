@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . "/../models/Assessment.php";
-require_once __DIR__ . "/../config/DatabaseUtil.php";
+require_once __DIR__ . "/../Models/Assessment.php";
+require_once __DIR__ . "/../Config/databaseUtil.php";
 
 /**
  * Class AssessmentController
@@ -11,7 +11,7 @@ require_once __DIR__ . "/../config/DatabaseUtil.php";
  * - OrgAdmin (role_id = 2) → access to assessments/results for their organisation
  * - Employee (role_id = 3) → access to own assessments/results only
  */
-class AssessmentController {
+class AssessmentController{
     private $db; // Database connection
 
     /**
@@ -25,7 +25,7 @@ class AssessmentController {
      * Create a new assessment
      * Only SystemAdmin can create assessments
      *
-     * @param User $currentUser Authenticated user attempting to create assessment
+     * @param UserModel $currentUser Authenticated user attempting to create assessment
      * @param array $data Associative array containing:
      *                    - 'title' => string
      *                    - 'description' => string
@@ -52,10 +52,43 @@ class AssessmentController {
         ]);
     }
 
+
+       public function updateAssessment($currentUser, $id, $data) {
+        if ($currentUser->getRoleId() != 1) {
+            die("Access denied: Only SystemAdmin can update assessments.");
+        }
+
+        $stmt = $this->db->prepare("
+            UPDATE assessments
+            SET title = ?, description = ?, content_id = ?, type = ?
+            WHERE id = ?
+        ");
+
+        return $stmt->execute([
+            $data['title'],
+            $data['description'],
+            $data['content_id'] ?? null,
+            $data['type'],
+            $id
+        ]);
+    }
+
+  /** ✅ Delete an assessment (SystemAdmin only) */
+     public function deleteAssessment($currentUser, $id) {
+        if ($currentUser->getRoleId() != 1) {
+            die("Access denied: Only SystemAdmin can delete assessments.");
+        }
+
+        $stmt = $this->db->prepare("DELETE FROM assessments WHERE id = ?");
+        return $stmt->execute([$id]);
+    }
+      
+    
+
     /**
      * List all assessments accessible to the current user
      * 
-     * @param User $currentUser Authenticated user
+     * @param UserModel $currentUser Authenticated user
      * @return array List of assessments (associative arrays)
      */
     public function listAssessments($currentUser) {
@@ -104,7 +137,7 @@ class AssessmentController {
      * - OrgAdmin: results of employees in their organisation
      * - Employee: only own results
      *
-     * @param User $currentUser Authenticated user
+     * @param UserModel $currentUser Authenticated user
      * @param int|null $employeeId Optional specific employee ID (OrgAdmin can filter)
      * @return array List of results (associative arrays)
      */
@@ -141,3 +174,4 @@ class AssessmentController {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
+
