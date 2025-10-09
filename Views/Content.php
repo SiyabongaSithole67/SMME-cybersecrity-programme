@@ -47,6 +47,13 @@ function extractYouTubeId($url) {
 }
 
 ?>
+<?php
+// Redirect immediately to the HTML page before any output
+if ($type === 4) {
+    header("Location: " . $content['link']);
+    exit();
+}
+?>
 <?php include __DIR__ . '/_user_badge.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -84,12 +91,6 @@ function extractYouTubeId($url) {
             <?php else: ?>
                 <p>No embeddable video ID found. <a href="<?= htmlspecialchars($content['link']) ?>" target="_blank">Open link</a></p>
             <?php endif; ?>
-        <?php elseif ($type === 4): // standalone HTML page ?>
-            <?php
-                // Redirect immediately to the HTML page
-                header("Location: " . $content['link']);
-                exit();
-            ?>
         <?php else: // document or fallback ?>
             <div class="doc">
                 <div><?php echo nl2br(htmlspecialchars($content['title'])); ?></div>

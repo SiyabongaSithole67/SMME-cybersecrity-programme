@@ -51,6 +51,7 @@ CREATE TABLE IF NOT EXISTS users (
     password TEXT NOT NULL,
     role_id INTEGER NOT NULL, -- 1=SystemAdmin, 2=OrgAdmin, 3=Employee
     organisation_id INTEGER,
+    approved INTEGER DEFAULT 1, -- ADDED THIS LINE FOR SysAdmin
     created_at TEXT DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY(role_id) REFERENCES roles(id),
     FOREIGN KEY(organisation_id) REFERENCES organisations(id)
