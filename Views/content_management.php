@@ -10,7 +10,7 @@ if (!isset($_SESSION['user'])) {
 }
 
 // Recreate a UserModel object from session data
-$currentUser = new UserModel(
+$currentUser = new UserModel (
     $_SESSION['user']['id'],
     $_SESSION['user']['name'],
     $_SESSION['user']['email'],
