@@ -5,7 +5,7 @@ require_once __DIR__ . '/../Models/UserModel.php';
 
 // Make sure a user is logged in
 if (!isset($_SESSION['user'])) {
-    header("Location: /Views/login.php");
+    header("Location: /Views/index.php");
     exit();
 }
 

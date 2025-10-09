@@ -3,7 +3,7 @@ session_start();
 
 // Only allow OrgAdmin users
 if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
-    header("Location: /Views/login.php");
+    header("Location: /Views/index.php");
     exit();
 }
 $user = $_SESSION['user'];

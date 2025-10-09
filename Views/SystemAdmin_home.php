@@ -3,7 +3,7 @@ session_start();
 
 // Only allow SystemAdmin users
 if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'systemAdmin') {
-    header("Location: /Views/login.php");
+    header("Location: /Views/index.php");
     exit();
 }
 $user = $_SESSION['user'];

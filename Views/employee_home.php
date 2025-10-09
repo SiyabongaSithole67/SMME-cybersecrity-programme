@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'employee') {
-    header("Location: /Views/login.php");
+    header("Location: /Views/index.php");
     exit();
 }
 $user = $_SESSION['user'];
@@ -28,6 +28,7 @@ $user = $_SESSION['user'];
   <nav>
     <span>Welcome, <?php echo htmlspecialchars($user['name']); ?></span> |
     <a href="/Views/employee_home.php">Home</a>
+    <a href="/Views/Assessment.php">Assessments</a>
     <a href="/Views/content_overview.php">Training Content</a>
     <a href="/Views/logout.php">Logout</a>
   </nav>

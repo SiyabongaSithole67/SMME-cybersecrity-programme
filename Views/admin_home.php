@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (!isset($_SESSION['user']) || ((int)($_SESSION['user']['role_id'] ?? 0) !== 1)) {
-    header("Location: /Views/login.php");
+    header("Location: /Views/index.php");
     exit();
 }
 $user = $_SESSION['user'];

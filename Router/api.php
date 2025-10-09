@@ -2,82 +2,66 @@
 
 header('Content-Type: application/json');
 
+// --- Controllers ---
 require_once __DIR__ . "/../controllers/LoginController.php";
 require_once __DIR__ . "/../controllers/UserController.php";
-require_once __DIR__ . "/../controllers/OrganisationController.php";
+require_once __DIR__ . "/../controllers/OrganizationController.php";
 require_once __DIR__ . "/../controllers/ContentController.php";
 require_once __DIR__ . "/../controllers/AssessmentController.php";
-require_once __DIR__ . "/../controllers/ResultsController.php";
 
-
-/**
- * --- Helper Functions ---
- */
-
-/**
- * Parse JSON input safely
- */
+// --- Helpers ---
 function getInput() {
     $input = file_get_contents("php://input");
     return json_decode($input, true) ?? [];
 }
 
-/**
- * Return 401 Unauthorized
- */
 function unauthorized($msg = "Unauthorized") {
     http_response_code(401);
     echo json_encode(["error" => $msg]);
     exit;
 }
 
-/**
- * Return 404 Not Found
- */
 function notFound($msg = "Endpoint not found") {
     http_response_code(404);
     echo json_encode(["error" => $msg]);
     exit;
 }
 
-/**
- * Simple auth check (currently email,password in header)
- * Replace later with token-based auth
- */
 function getCurrentUser() {
-    
     if (!isset($_SERVER['HTTP_AUTHORIZATION'])) {
         unauthorized("Missing Authorization header");
     }
-
-    // Expect: Authorization: email,password
     list($email, $password) = explode(",", $_SERVER['HTTP_AUTHORIZATION']);
     $loginCtrl = new LoginController();
     return $loginCtrl->login($email, $password);
 }
 
-/**
- * Parse request path
- */
+// --- Endpoints ---
+$loginEndpoint = '/api/login';
+$usersEndpoint = '/api/users';
+$organisationsEndpoint = '/api/organisations';
+$contentEndpoint = '/api/content';
+$assessmentsEndpoint = '/api/assessments';
+$submitAssessmentEndpoint = '/api/assessments/submit';
+$resultsEndpoint = '/api/assessments/results';
+
+// --- Parse request ---
 $request = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $method = $_SERVER['REQUEST_METHOD'];
 $input = getInput();
 
-// Instantiate controllers
+// --- Controllers ---
 $loginCtrl = new LoginController();
 $userCtrl = new UserController();
-$orgCtrl = new OrganisationController();
+$orgCtrl = new OrganizationController();
 $contentCtrl = new ContentController();
 $assessmentCtrl = new AssessmentController();
-$resultCtrl = new ResultsController();
 
-/**
- * --- Routing ---
- */
+// --- Routing ---
 switch (true) {
 
     // --- Login ---
-    case $request === '/api/login' && $method === 'POST':
+    case $request === $loginEndpoint && $method === 'POST':
         $currentUser = $loginCtrl->login($input['email'], $input['password']);
         echo json_encode([
             "id" => $currentUser->getId(),
@@ -87,77 +71,79 @@ switch (true) {
         break;
 
     // --- Users ---
-    case $request === '/api/users' && $method === 'GET':
+    case $request === $usersEndpoint && $method === 'GET':
         $currentUser = getCurrentUser();
-        $userCtrl->listUsers($currentUser);
+        echo json_encode($userCtrl->listUsers($currentUser));
         break;
 
-    case $request === '/api/users' && $method === 'POST':
+    case $request === $usersEndpoint && $method === 'POST':
         $currentUser = getCurrentUser();
-        $userCtrl->createUser($currentUser, $input);
+        echo json_encode($userCtrl->createUser($currentUser, $input));
         break;
 
     // --- Organisations ---
-    case $request === '/api/organisations' && $method === 'GET':
+    case $request === $organisationsEndpoint && $method === 'GET':
         $currentUser = getCurrentUser();
-        $orgCtrl->listOrganisations($currentUser);
+        echo json_encode($orgCtrl->listOrganisations($currentUser));
         break;
 
     case preg_match('/\/api\/organisations\/(\d+)\/approve/', $request, $matches) && $method === 'PUT':
         $currentUser = getCurrentUser();
         $orgId = $matches[1];
-        $orgCtrl->approveOrganisation($currentUser, $orgId);
+        echo json_encode($orgCtrl->approveOrganisation($currentUser, $orgId));
         break;
 
     // --- Content ---
-    case $request === '/api/content' && $method === 'GET':
+    case $request === $contentEndpoint && $method === 'GET':
         $currentUser = getCurrentUser();
-        $contentCtrl->listContent($currentUser);
+        echo json_encode($contentCtrl->listContent($currentUser));
         break;
 
-    case $request === '/api/content' && $method === 'POST':
+    case $request === $contentEndpoint && $method === 'POST':
         $currentUser = getCurrentUser();
-        $contentCtrl->addContent($currentUser, $input['title'], $input['link']);
+        echo json_encode($contentCtrl->addContent($currentUser, $input['title'], $input['link']));
         break;
 
-
-            // --- Assessments ---
-    case $request === '/api/assessments' && $method === 'GET':
+    // --- Assessments ---
+    case $request === $assessmentsEndpoint && $method === 'GET':
         $currentUser = getCurrentUser();
-        $assessmentCtrl->listAssessments($currentUser);
+        echo json_encode($assessmentCtrl->listAssessments($currentUser));
         break;
 
-    case preg_match('/\/api\/assessments\/(\d+)/', $request, $matches) && $method === 'GET':
+    case $request === $assessmentsEndpoint && $method === 'POST':
+        $currentUser = getCurrentUser();
+        echo json_encode(["success" => $assessmentCtrl->createAssessment($currentUser, $input)]);
+        break;
+
+    case preg_match('/\/api\/assessments\/(\d+)$/', $request, $matches) && $method === 'PUT':
         $currentUser = getCurrentUser();
         $assessmentId = $matches[1];
-        $assessmentCtrl->getAssessmentById($currentUser, $assessmentId);
+        echo json_encode(["success" => $assessmentCtrl->updateAssessment($currentUser, $assessmentId, $input)]);
         break;
 
-    case $request === '/api/assessments' && $method === 'POST':
+    case preg_match('/\/api\/assessments\/(\d+)$/', $request, $matches) && $method === 'DELETE':
         $currentUser = getCurrentUser();
-        $assessmentCtrl->createAssessment($currentUser, $input);
+        $assessmentId = $matches[1];
+        echo json_encode(["success" => $assessmentCtrl->deleteAssessment($currentUser, $assessmentId)]);
         break;
 
-            // --- Results ---
-    case $request === '/api/results' && $method === 'GET':
+    case $request === $submitAssessmentEndpoint && $method === 'POST':
         $currentUser = getCurrentUser();
-        $resultCtrl->listResults($currentUser);
+        echo json_encode(["success" => $assessmentCtrl->submitResult(
+            $input['assessment_id'],
+            $currentUser->getId(),
+            $input['score']
+        )]);
         break;
 
-    case preg_match('/\/api\/results\/(\d+)/', $request, $matches) && $method === 'GET':
+    case $request === $resultsEndpoint && $method === 'GET':
         $currentUser = getCurrentUser();
-        $resultId = $matches[1];
-        $resultCtrl->getResultById($currentUser, $resultId);
+        $employeeId = $_GET['employee_id'] ?? null;
+        echo json_encode($assessmentCtrl->viewResults($currentUser, $employeeId));
         break;
 
-    case $request === '/api/results' && $method === 'POST':
-        $currentUser = getCurrentUser();
-        $resultCtrl->submitResult($currentUser, $input);
-        break;
-
-    // --- Default 404 ---
+    // --- Default ---
     default:
         notFound();
         break;
 }
-

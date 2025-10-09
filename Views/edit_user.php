@@ -4,7 +4,7 @@ require_once __DIR__ . '/../Controllers/UserController.php';
 require_once __DIR__ . '/../Models/UserModel.php';
 
 if (!isset($_SESSION['user'])) {
-    header('Location: /Views/login.php');
+    header('Location: /Views/index.php');
     exit();
 }
 $u = $_SESSION['user'];
