@@ -146,6 +146,22 @@ case $request === '/api/results' && $method === 'GET':
     echo json_encode($results);
     break;
 
+            // --- Results ---
+    case $request === '/api/results' && $method === 'GET':
+        $currentUser = getCurrentUser();
+        $resultCtrl->listResults($currentUser);
+        break;
+
+    case preg_match('/\/api\/results\/(\d+)/', $request, $matches) && $method === 'GET':
+        $currentUser = getCurrentUser();
+        $resultId = $matches[1];
+        $resultCtrl->getResultById($currentUser, $resultId);
+        break;
+
+    case $request === '/api/results' && $method === 'POST':
+        $currentUser = getCurrentUser();
+        $resultCtrl->submitResult($currentUser, $input);
+        break;
 
     // --- Default 404 ---
     default:
