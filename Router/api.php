@@ -120,31 +120,23 @@ switch (true) {
         $contentCtrl->addContent($currentUser, $input['title'], $input['link']);
         break;
 
-     // --- Assessments ---
-case $request === '/api/assessments' && $method === 'POST':
-    $currentUser = getCurrentUser();
-    $success = $assessmentCtrl->createAssessment($currentUser, $input);
-    echo json_encode(["success" => $success]);
-    break;
 
-case $request === '/api/assessments' && $method === 'GET':
-    $currentUser = getCurrentUser();
-    $assessments = $assessmentCtrl->listAssessments($currentUser);
-    echo json_encode($assessments);
-    break;
+            // --- Assessments ---
+    case $request === '/api/assessments' && $method === 'GET':
+        $currentUser = getCurrentUser();
+        $assessmentCtrl->listAssessments($currentUser);
+        break;
 
-case $request === '/api/assessments/submit' && $method === 'POST':
-    $currentUser = getCurrentUser();
-    $success = $assessmentCtrl->submitResult($input['assessment_id'], $currentUser->getId(), $input['score']);
-    echo json_encode(["success" => $success]);
-    break;
+    case preg_match('/\/api\/assessments\/(\d+)/', $request, $matches) && $method === 'GET':
+        $currentUser = getCurrentUser();
+        $assessmentId = $matches[1];
+        $assessmentCtrl->getAssessmentById($currentUser, $assessmentId);
+        break;
 
-case $request === '/api/results' && $method === 'GET':
-    $currentUser = getCurrentUser();
-    $employeeId = $_GET['employee_id'] ?? null;
-    $results = $assessmentCtrl->viewResults($currentUser, $employeeId);
-    echo json_encode($results);
-    break;
+    case $request === '/api/assessments' && $method === 'POST':
+        $currentUser = getCurrentUser();
+        $assessmentCtrl->createAssessment($currentUser, $input);
+        break;
 
             // --- Results ---
     case $request === '/api/results' && $method === 'GET':

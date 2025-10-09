@@ -1,3 +1,4 @@
+
 <?php
 
 // Include the User model and Database connection class
