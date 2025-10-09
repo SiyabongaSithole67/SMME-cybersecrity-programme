@@ -1,109 +1,83 @@
 <?php
 
-// Using a procedural approach in creating routes, rather then making it a class implementing OOP style
-// Set the response content type to JSON for all API responses
 header('Content-Type: application/json');
 
-// Import the controller classes that handle the business logic for each module
 require_once __DIR__ . "/../controllers/LoginController.php";
 require_once __DIR__ . "/../controllers/UserController.php";
 require_once __DIR__ . "/../controllers/OrganisationController.php";
 require_once __DIR__ . "/../controllers/ContentController.php";
+require_once __DIR__ . "/../controllers/AssessmentController.php";
+require_once __DIR__ . "/../controllers/ResultsController.php";
+
 
 /**
  * --- Helper Functions ---
  */
 
 /**
- * getInput()
- * ----------------------
- * Reads the raw JSON input from the HTTP request body
- * and converts it into a PHP associative array.
- * Returns an empty array if no input or invalid JSON.
+ * Parse JSON input safely
  */
 function getInput() {
-    $input = file_get_contents("php://input"); // read raw input
-    return json_decode($input, true) ?? [];     // decode JSON, fallback to empty array
+    $input = file_get_contents("php://input");
+    return json_decode($input, true) ?? [];
 }
 
 /**
- * unauthorized()
- * ----------------------
- * Sends a 401 HTTP status and returns an error message in JSON format.
- * Terminates the script using exit().
+ * Return 401 Unauthorized
  */
 function unauthorized($msg = "Unauthorized") {
-    http_response_code(401);                  // set status code 401
-    echo json_encode(["error" => $msg]);      // return JSON error message
-    exit;                                     // stop execution
+    http_response_code(401);
+    echo json_encode(["error" => $msg]);
+    exit;
 }
 
 /**
- * notFound()
- * ----------------------
- * Sends a 404 HTTP status and returns an error message in JSON format.
- * Used when the requested endpoint does not exist.
+ * Return 404 Not Found
  */
 function notFound($msg = "Endpoint not found") {
-    http_response_code(404);                  // set status code 404
-    echo json_encode(["error" => $msg]);      // return JSON error message
-    exit;                                     // stop execution
+    http_response_code(404);
+    echo json_encode(["error" => $msg]);
+    exit;
 }
 
 /**
- * getCurrentUser()
- * ----------------------
- * Simple authentication check based on the Authorization HTTP header.
- * Currently expects: "Authorization: email,password"
- * Calls LoginController->login() to verify credentials.
- * Returns a User object on success, or terminates with 401 if failed.
+ * Simple auth check (currently email,password in header)
+ * Replace later with token-based auth
  */
-
 function getCurrentUser() {
     
-    if (!isset($_SERVER['HTTP_AUTHORIZATION'])) {  // check if header exists
-        unauthorized("Missing Authorization header"); // terminate if missing
+    if (!isset($_SERVER['HTTP_AUTHORIZATION'])) {
+        unauthorized("Missing Authorization header");
     }
 
-    // Split the header by comma to extract email and password
+    // Expect: Authorization: email,password
     list($email, $password) = explode(",", $_SERVER['HTTP_AUTHORIZATION']);
-
     $loginCtrl = new LoginController();
-    return $loginCtrl->login($email, $password);  // return User object
+    return $loginCtrl->login($email, $password);
 }
 
-
-// --- Endpoint declarations ---
-$loginEndpoint          = '/api/login';
-$usersEndpoint          = '/api/users';
-$organisationsEndpoint  = '/api/organisations';
-$approveOrgEndpoint     = '/api/organisations/{id}/approve';
-$contentEndpoint        = '/api/content';
-
-
 /**
- * Parse the request URI and HTTP method
+ * Parse request path
  */
-$request = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH); // extract path from URL
-$method = $_SERVER['REQUEST_METHOD'];                         // GET, POST, PUT, DELETE
-$input = getInput();                                          // get JSON body as array
+$request = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$method = $_SERVER['REQUEST_METHOD'];
+$input = getInput();
 
-// Instantiate controllers (these handle the actual business logic)
+// Instantiate controllers
 $loginCtrl = new LoginController();
 $userCtrl = new UserController();
 $orgCtrl = new OrganisationController();
 $contentCtrl = new ContentController();
-
+$assessmentCtrl = new AssessmentController();
+$resultCtrl = new ResultsController();
 
 /**
  * --- Routing ---
- * Simple switch-based router that handles all endpoints.
- * Each case matches a URL path and HTTP method.
  */
 switch (true) {
 
     // --- Login ---
-    case $request === $loginEndpoint && $method === 'POST':
+    case $request === '/api/login' && $method === 'POST':
         $currentUser = $loginCtrl->login($input['email'], $input['password']);
         echo json_encode([
             "id" => $currentUser->getId(),
@@ -113,20 +87,18 @@ switch (true) {
         break;
 
     // --- Users ---
-    //getting a list of users
-    case $request === $usersEndpoint && $method === 'GET':
+    case $request === '/api/users' && $method === 'GET':
         $currentUser = getCurrentUser();
         $userCtrl->listUsers($currentUser);
         break;
 
-        //create a user 
-    case $request === $usersEndpoint && $method === 'POST':
+    case $request === '/api/users' && $method === 'POST':
         $currentUser = getCurrentUser();
         $userCtrl->createUser($currentUser, $input);
         break;
 
     // --- Organisations ---
-    case $request === $organisationsEndpoint && $method === 'GET':
+    case $request === '/api/organisations' && $method === 'GET':
         $currentUser = getCurrentUser();
         $orgCtrl->listOrganisations($currentUser);
         break;
@@ -138,21 +110,46 @@ switch (true) {
         break;
 
     // --- Content ---
-    case $request === $contentEndpoint && $method === 'GET':
+    case $request === '/api/content' && $method === 'GET':
         $currentUser = getCurrentUser();
         $contentCtrl->listContent($currentUser);
         break;
 
-    case $request === $contentEndpoint && $method === 'POST':
+    case $request === '/api/content' && $method === 'POST':
         $currentUser = getCurrentUser();
         $contentCtrl->addContent($currentUser, $input['title'], $input['link']);
         break;
 
-    // --- Default ---
+     // --- Assessments ---
+case $request === '/api/assessments' && $method === 'POST':
+    $currentUser = getCurrentUser();
+    $success = $assessmentCtrl->createAssessment($currentUser, $input);
+    echo json_encode(["success" => $success]);
+    break;
+
+case $request === '/api/assessments' && $method === 'GET':
+    $currentUser = getCurrentUser();
+    $assessments = $assessmentCtrl->listAssessments($currentUser);
+    echo json_encode($assessments);
+    break;
+
+case $request === '/api/assessments/submit' && $method === 'POST':
+    $currentUser = getCurrentUser();
+    $success = $assessmentCtrl->submitResult($input['assessment_id'], $currentUser->getId(), $input['score']);
+    echo json_encode(["success" => $success]);
+    break;
+
+case $request === '/api/results' && $method === 'GET':
+    $currentUser = getCurrentUser();
+    $employeeId = $_GET['employee_id'] ?? null;
+    $results = $assessmentCtrl->viewResults($currentUser, $employeeId);
+    echo json_encode($results);
+    break;
+
+
+    // --- Default 404 ---
     default:
         notFound();
         break;
 }
-
-
 
