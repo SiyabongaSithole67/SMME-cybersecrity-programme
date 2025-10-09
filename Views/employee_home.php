@@ -28,6 +28,7 @@ $user = $_SESSION['user'];
   <nav>
     <span>Welcome, <?php echo htmlspecialchars($user['name']); ?></span> |
     <a href="/Views/employee_home.php">Home</a>
+    <a href="/Views/Assessment.php">Assessments</a>
     <a href="/Views/content_overview.php">Training Content</a>
     <a href="/Views/logout.php">Logout</a>
   </nav>
