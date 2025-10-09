@@ -80,7 +80,7 @@ if ($currentUser->getRoleId() == 1) {
 
     th, td {
         border: 1px solid #ccc;
-        padding: 2px 8px;
+        padding: 4px 8px;
         text-align: left;
     }
     /* Set a specific width for the Actions column */
@@ -103,10 +103,10 @@ if ($currentUser->getRoleId() == 1) {
     .actions { display: flex; gap: 4px; align-items: center; }
         .container { width: 90%; margin: 0 auto; }
         h1 { text-align: center; }
-        form { margin: 20px auto; width: 60%; background: #fafafa; padding: 2px; border-radius: 8px; }
         label { display: block; margin-top: 8px; }
         input, select { width: 100%; padding: 6px; margin-top: 4px; }
-        button {  border: none; background: #007BFF; color: white; border-radius: 4px; }
+        
+        button {  border: none; background: #007BFF; color: white; border-radius: 4px;margin-top: 4px;}
         /* Make inline action buttons compact to match Approve/Reset */
         .actions button, .actions form button {
             margin-top: 0;
@@ -115,6 +115,7 @@ if ($currentUser->getRoleId() == 1) {
             height: 28px;
             line-height: 20px;
             box-sizing: border-box;
+            align-items: center;
         }
     </style>
 </head>
@@ -146,21 +147,22 @@ if ($currentUser->getRoleId() == 1) {
                     <?php if ($currentUser->getRoleId() == 1 || ($currentUser->getRoleId() == 2 && $user['organisation_id'] == $currentUser->getOrganisationId())): ?>
                         <a href="/Views/edit_user.php?id=<?= htmlspecialchars($user['id']) ?>"><button type="button">Edit</button></a>
                         
-                        <?php /*if (!$user['approved']): ?>
-                            <form method="post" action="/Controllers/UserController.php?action=approve" style="display:inline">
-                                <input type="hidden" name="id" value="<?= htmlspecialchars($user['id']) ?>" />
-                                <button type="submit" style="background:#2e8b57;">Approve</button>
-                            </form>
-                        <?php endif; */?>
-                        <form method="post" action="/Controllers/UserController.php?action=reset" style="display:inline" onsubmit="return resetPrompt(this);">
+                       
+                        <form method="post" action="/Controllers/UserController.php?action=reset"  style="margin-bottom: 0px; "onsubmit="return resetPrompt(this);">
                             <input type="hidden" name="id" value="<?= htmlspecialchars($user['id']) ?>" />
                             <input type="hidden" name="new_password" />
                             <button type="submit">Reset Password</button>
                         </form>
                         <?php if ($user['id'] != $currentUser->getId()): // don't offer delete for yourself ?>
-                            <form method="post" action="/Controllers/UserController.php?action=delete" style="display:inline" onsubmit="return confirmDelete(this, '<?= htmlspecialchars(addslashes($user['name'])) ?>');">
+                            <form method="post" action="/Controllers/UserController.php?action=delete" style="margin-bottom: 0px; "onsubmit="return confirmDelete(this, '<?= htmlspecialchars(addslashes($user['name'])) ?>');">
                                 <input type="hidden" name="id" value="<?= htmlspecialchars($user['id']) ?>" />
                                 <button type="submit" style="background:#dc3545;">Delete</button>
+                            </form>
+                        <?php endif; ?>
+                        <?php if (!$user['approved']): ?>
+                            <form method="post" action="/Controllers/UserController.php?action=approve"style="margin-bottom: 0px; " ">
+                                <input type="hidden" name="id" value="<?= htmlspecialchars($user['id']) ?>" />
+                                <button type="submit" style="background:#2e8b57;">Approve</button>
                             </form>
                         <?php endif; ?>
                     <?php else: ?>
@@ -193,7 +195,7 @@ if ($currentUser->getRoleId() == 1) {
                 <option value="3" selected>Employee</option>
             </select>
 
-            <label for="organisation_id">Organisation (optional):</label>
+            <label for="organisation_id">Organisation:</label>
             <select id="organisation_id" name="organisation_id">
                 <option value="">-- None / Global --</option>
                 <?php foreach ($organisations as $org): ?>

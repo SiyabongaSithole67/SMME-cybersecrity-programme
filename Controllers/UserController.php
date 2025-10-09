@@ -145,7 +145,7 @@ class UserController {
         }
         $hashed = password_hash($newPassword, PASSWORD_DEFAULT);
         $stmt = $this->db->prepare("UPDATE users SET password = ? WHERE id = ?");
-        return $stmt->execute([$newPassword, (int)$id]);
+        return $stmt->execute([$hashed, (int)$id]);
     }
 
     /**
@@ -248,12 +248,14 @@ class UserController {
                 if ($name === '' || $email === '' || $password === '') {
                     $redirect('msg=missing_fields');
                 }
+                
+                $hashed = password_hash($password, PASSWORD_DEFAULT);
 
                 $userData = [
                     'name' => $name,
                     'email' => $email,
                     // store raw password for now per request
-                    'password' => $password,
+                    'password' => $hashed,
                     'role_id' => $role_id,
                     'organisation_id' => $organisation_id,
                     'approved' => 1

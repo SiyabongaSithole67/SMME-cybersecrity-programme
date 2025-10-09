@@ -79,31 +79,31 @@ $organisations = $orgController->listOrganisations($currentUser);
     }
     /* Set a specific width for the Actions column */
     th:nth-child(5), td:nth-child(5) {
-        width: 300px; /* Give the Actions column enough space for all buttons */
-        min-width: 320px;
+        width: 200px; /* Give the Actions column enough space for all buttons */
+        min-width: 200px;
     }
     th { background: #f0f0f0; }
     /* compact rows */
     table tr {
-        height: 36px;
+        height: 30px;
     }
     .actions {
         display: flex;
         gap: 4px; /* Slightly reduced gap to save space */
-        align-items: center;
+        align-items: left;
         /* Ensure content doesn't wrap inside the actions cell */
         flex-wrap: nowrap; 
     }
     .actions { display: flex; gap: 4px; align-items: center; }
         .container { width: 90%; margin: 0 auto; }
         h1 { text-align: center; }
-        form { margin: 20px auto; width: 60%; background: #fafafa; padding: 2px; border-radius: 8px; }
         label { display: block; margin-top: 8px; }
         input, select { width: 100%; padding: 6px; margin-top: 4px; }
-        button {  border: none; background: #007BFF; color: white; border-radius: 4px; }
+        button {  border: none; background: #007BFF; color: white; border-radius: 4px;margin-left: 4px;
+    margin-right: 4px; margin-top: 4px;}
         /* Make inline action buttons compact to match Approve/Reset */
         .actions button, .actions form button {
-            margin-top: 0;
+            margin-top: 4px;
             padding: 4px 8px;
             font-size: 0.85rem;
             height: 28px;
@@ -184,13 +184,20 @@ $organisations = $orgController->listOrganisations($currentUser);
                     <td><?= htmlspecialchars($org['id']) ?></td>
                     <td><?= htmlspecialchars($org['name']) ?></td>
                     <td class="actions">
-                       
-                        
                         <!-- Delete Action -->
                         <form method="post" action="/Controllers/OrganizationController.php?action=delete" style="display:inline" onsubmit="return confirmDelete(this, '<?= htmlspecialchars(addslashes($org['name'])) ?>');">
                             <input type="hidden" name="id" value="<?= htmlspecialchars($org['id']) ?>" />
                             <button type="submit" style="background:#dc3545;">Delete</button>
                         </form>
+                       <!-- Approve Action (Only show if not approved) -->
+                        <?php if (!$org['approved']): ?>
+                            <form method="post" action="/Controllers/OrganizationController.php?action=approve" style="display:inline">
+                                <input type="hidden" name="id" value="<?= htmlspecialchars($org['id']) ?>" />
+                                <button type="submit" class="approve-btn">Approve</button>
+                            </form>
+                        <?php endif; ?>
+                        
+                        
                     </td>
                 </tr>
             <?php endforeach; ?>

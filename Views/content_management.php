@@ -34,7 +34,6 @@ $contentList = $contentController->listContent($currentUser);
     table { width: 90%; margin: 2rem auto; border-collapse: collapse; }
     th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
     th { background: #f0f0f0; }
-    form { width: 90%; margin: 2rem auto; display: flex; gap: 1rem; }
     input[type="text"] { flex: 1; padding: 8px; }
     button { padding: 8px 12px; border: none; background: #007BFF; color: white; border-radius: 4px; }
   </style>
@@ -45,7 +44,7 @@ $contentList = $contentController->listContent($currentUser);
 
   <?php if ($_SESSION['user']['role'] == 'systemAdmin'): ?>
   <!-- Add Content (only SystemAdmin) -->
-  <form method="POST" action="/Controllers/ContentController.php?action=add">
+  <form method="POST" action="/Controllers/ContentController.php?action=add" style="margin: 20px auto; width: 500px;">
     <input type="text" name="title" placeholder="Content Title" required />
     <input type="text" name="link" placeholder="Link" required />
     <button type="submit">Add Content</button>
