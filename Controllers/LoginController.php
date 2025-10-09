@@ -1,85 +1,96 @@
 <?php
+require_once __DIR__ . "/../models/UserModel.php";
+require_once __DIR__ . "/../Config/databaseUtil.php";
 
-require_once __DIR__ . "/../models/User.php";
-require_once __DIR__ . "/../config/DatabaseUtil.php";
-
-/**
- * Class LoginController
- * 
- * Handles user authentication.
- * Provides a login method that verifies email and password and returns a User object.
- */
 class LoginController {
-    
-    /**
-     * @var PDO $db The PDO database connection
-     */
     private $db;
 
-    /**
-     * Constructor
-     * Initializes the database connection
-     */
     public function __construct() {
         $this->db = (new DatabaseUtil())->connect();
     }
 
     /**
-     * Login a user by email and password
-     *
-     * @param string $email The email address entered by the user
-     * @param string $password The password entered by the user
-     * @return UserModel Returns a populated User object if login succeeds
-     * @throws Exception if login fails
+     * Authenticate user and redirect to role-specific home page
      */
-    public function login($email, $password) {
+public function login($email, $password) {
+    // Trim user input to remove accidental spaces
+    $email = trim($email);
+    $password = trim($password);
 
-        // Prepare SQL to find user by email
-        $stmt = $this->db->prepare("SELECT * FROM users WHERE email=?");
-        $stmt->execute([$email]);
+    // Fetch user from database
+    $stmt = $this->db->prepare("SELECT * FROM users WHERE email = :email");
+    $stmt->bindParam(':email', $email);
+    $stmt->execute();
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        // Fetch user row as associative array
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        // If no user found, deny access
-        if (!$row) {
-            die("Login failed: user not found");
-        }
-
-        
-        // Simple password check (plaintext for now)
-        // NOTE: In production, use password_hash() and password_verify()
-        if ($row['password'] !== $password) {
-            die("Login failed: incorrect password");
-        }
-
-        // Populate User object with database data
-        $user = new UserModel();
-        $user->setId($row['id']);
-        $user->setName($row['name']);
-        $user->setEmail($row['email']);
-        $user->setPassword($row['password']);
-        $user->setRoleId($row['role_id']);
-        $user->setOrganisationId($row['organisation_id']);
-
-        // Return the authenticated User object
-        return $user;
+    if (!$row) {
+        die("Login failed: user not found");
     }
 
-    public function verifyUser($email, $password) {
-        $db = new DatabaseUtil();  
-        $conn = $db->connect();
+    $stored_hash = $row['password'];
 
-        $stmt = $conn->prepare("SELECT * FROM users WHERE email = :email");
-        $stmt->bindParam(':email', $email);
-        $stmt->execute();
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    // Compare passwords (plain text for now)
+    if (password_verify($password, $stored_hash)===false) {
+        die("Login failed: incorrect username or password");
+    }
 
-        if ($user && password_verify($password, $user['password'])) {
-            return $user;
+    if($row['approved'] == 0){
+        die("Login failed: account pending approval");
+    }
+    // Populate User object
+    $user = new UserModel(); //instance of the
+    $user->setId($row['id']);
+    $user->setName($row['name']);
+    $user->setEmail($row['email']);
+    $user->setRoleId($row['role_id']);
+    $user->setOrganisationId($row['organisation_id']);
+
+    // Start session if not already started
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+
+    // Store complete user info in session for other views/controllers
+    $_SESSION['user'] = [
+        'id' => $user->getId(),
+        'name' => $user->getName(),
+        'email' => $user->getEmail(),
+        'role' => $this->roleName($user->getRoleId()), 
+        'role_id' => (int)$user->getRoleId(),
+        'organisation_id' => $user->getOrganisationId()
+    ];
+
+    // Redirect based on role
+    switch ($_SESSION['user']['role']) {
+        case 'systemAdmin':
+            header("Location: /Views/systemAdmin_home.php");
+            break;
+        case 'admin':
+            header("Location: /Views/OrgAdmin_home.php");
+            break;
+        case 'employee':
+            header("Location: /Views/employee_home.php");
+            break;
+        default:
+            die("Unknown role. Cannot redirect.");
+    }
+
+    exit();
+}
+
+
+    /**
+     * Convert role_id to readable role name
+     */
+    private function roleName($roleId) {
+        switch ($roleId) {
+            case 1: return 'systemAdmin';
+            case 2: return 'admin';
+            case 3: return 'employee';
+            default: return 'unknown';
         }
-        return false;
     }
 }
+
 
 
