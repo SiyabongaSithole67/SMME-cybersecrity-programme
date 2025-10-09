@@ -28,8 +28,6 @@ if ($type === null) {
         $type = 2;
     } elseif (preg_match('/\.(pdf|docx?|pptx?)($|\?)/i', $link)) {
         $type = 3;
-    } elseif (preg_match('/\.(html?|htm)($|\?)/i', $link)) {
-        $type = 4; // HTML page
     } else {
         // default to poster if link looks like an image, else document
         if (preg_match('/\.(jpe?g|png|gif|webp)($|\?)/i', $link)) $type = 1;
@@ -39,15 +37,13 @@ if ($type === null) {
 
 // helper: extract youtube id
 function extractYouTubeId($url) {
-   if (preg_match('/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]+)/', $url, $m)) {
-        return $m[1];
-    }
+    if (preg_match('/(?:youtube\.com\/watch\?v=|youtube\.com\/embed\/|youtu\.be\/)([a-zA-Z0-9_-]+)/', $url, $m)) return $m[1];
+    // try v= param
     if (preg_match('/[?&]v=([a-zA-Z0-9_-]+)/', $url, $m)) return $m[1];
     return '';
 }
 
 ?>
-<?php include __DIR__ . '/_user_badge.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -84,12 +80,6 @@ function extractYouTubeId($url) {
             <?php else: ?>
                 <p>No embeddable video ID found. <a href="<?= htmlspecialchars($content['link']) ?>" target="_blank">Open link</a></p>
             <?php endif; ?>
-        <?php elseif ($type === 4): // standalone HTML page ?>
-            <?php
-                // Redirect immediately to the HTML page
-                header("Location: " . $content['link']);
-                exit();
-            ?>
         <?php else: // document or fallback ?>
             <div class="doc">
                 <div><?php echo nl2br(htmlspecialchars($content['title'])); ?></div>

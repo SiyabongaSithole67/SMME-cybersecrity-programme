@@ -3,7 +3,7 @@ session_start();
 
 // Only allow OrgAdmin users
 if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
-    header("Location: /Views/index.php");
+    header("Location: /Views/login.php");
     exit();
 }
 $user = $_SESSION['user'];
@@ -31,13 +31,13 @@ $user = $_SESSION['user'];
     <span>Welcome, <?php echo htmlspecialchars($user['name']); ?></span> |
     <a href="/Views/OrgAdmin_home.php">Home</a>
   <a href="/Views/manage_users.php">Manage Employees</a>
-  <a href="/Views/content_overview.php">Training Content</a>
+    <a href="/Views/view_reports.php">Reports</a>
     <a href="/Views/logout.php">Logout</a>
   </nav>
 
   <main style="padding: 2rem;">
     <h1>Organisation Admin Dashboard</h1>
-    <p>Here you can manage employees and view content.</p>
+    <p>Here you can manage employees, view reports, and configure organisation settings.</p>
   </main>
 </body>
 </html>

@@ -5,7 +5,7 @@ $user = $_SESSION['user'] ?? null;
 if (!$user) return;
 $name = htmlspecialchars($user['name'] ?? '');
 $roleId = (int)($user['role_id'] ?? 0);
-$home = '/Views/index.php';
+$home = '/Views/login.php';
 switch ($roleId) {
     case 1: $home = '/Views/SystemAdmin_home.php'; break;
     case 2: $home = '/Views/OrgAdmin_home.php'; break;
