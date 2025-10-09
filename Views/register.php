@@ -83,7 +83,7 @@ $org_value = htmlspecialchars($_GET['org'] ?? '');
       <input type="hidden" name="action" value="register"> 
       
       <button type="submit">Register Account</button>
-      <a href="login.php">Back to Login</a>
+      <a href="index.php">Back to Login</a>
   </form>
 </body>
 </html>
