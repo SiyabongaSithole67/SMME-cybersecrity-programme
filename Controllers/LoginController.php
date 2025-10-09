@@ -27,11 +27,16 @@ public function login($email, $password) {
         die("Login failed: user not found");
     }
 
+    $stored_hash = $row['password'];
+
     // Compare passwords (plain text for now)
-    if (trim($row['password']) !== $password) {
+    if (password_verify($password, $stored_hash)===false) {
         die("Login failed: incorrect username or password");
     }
 
+    if($row['approved'] == 0){
+        die("Login failed: account pending approval");
+    }
     // Populate User object
     $user = new UserModel(); //instance of the
     $user->setId($row['id']);
