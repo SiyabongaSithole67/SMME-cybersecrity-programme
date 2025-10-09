@@ -51,9 +51,9 @@ if (!isset($user)) {
 
   <div class="profile-container">
     <h2>Employee Profile</h2>
-    <p><strong>Email:</strong> <?php echo htmlspecialchars($user['email']); ?></p>
-    <p><strong>Role:</strong> <?php echo htmlspecialchars($user['role']); ?></p>
-    <p><strong>Organisation ID:</strong> <?php echo htmlspecialchars($user['organisation_id']); ?></p>
+  <p><strong>Email:</strong> <?php echo htmlspecialchars($user['email']); ?></p>
+  <p><strong>Role:</strong> <?php echo htmlspecialchars($user['role'] ?? ($_SESSION['user']['role'] ?? 'unknown')); ?></p>
+  <p><strong>Organisation ID:</strong> <?php echo htmlspecialchars($user['organisation_id'] ?? ($_SESSION['user']['organisation_id'] ?? '')); ?></p>
   </div>
 </body>
 </html>
