@@ -11,7 +11,7 @@ require_once __DIR__ . "/../Config/databaseUtil.php";
  * - OrgAdmin (role_id = 2) → access to assessments/results for their organisation
  * - Employee (role_id = 3) → access to own assessments/results only
  */
-class AssessmentController {
+class AssessmentController{
     private $db; // Database connection
 
     /**
@@ -51,6 +51,39 @@ class AssessmentController {
             $data['type']
         ]);
     }
+
+
+       public function updateAssessment($currentUser, $id, $data) {
+        if ($currentUser->getRoleId() != 1) {
+            die("Access denied: Only SystemAdmin can update assessments.");
+        }
+
+        $stmt = $this->db->prepare("
+            UPDATE assessments
+            SET title = ?, description = ?, content_id = ?, type = ?
+            WHERE id = ?
+        ");
+
+        return $stmt->execute([
+            $data['title'],
+            $data['description'],
+            $data['content_id'] ?? null,
+            $data['type'],
+            $id
+        ]);
+    }
+
+  /** ✅ Delete an assessment (SystemAdmin only) */
+     public function deleteAssessment($currentUser, $id) {
+        if ($currentUser->getRoleId() != 1) {
+            die("Access denied: Only SystemAdmin can delete assessments.");
+        }
+
+        $stmt = $this->db->prepare("DELETE FROM assessments WHERE id = ?");
+        return $stmt->execute([$id]);
+    }
+      
+    
 
     /**
      * List all assessments accessible to the current user
@@ -141,3 +174,4 @@ class AssessmentController {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
+
