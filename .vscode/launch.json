@@ -1,0 +1,19 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Run PHP built-in server",
+            "type": "php",
+            "request": "launch",
+            "program": "",
+            "runtimeExecutable": "php",
+            "runtimeArgs": [
+                "-S", "localhost:8000",
+                "-t", "${workspaceFolder}"
+            ],
+            "port": 0,
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}
+
